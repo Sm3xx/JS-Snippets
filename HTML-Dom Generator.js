@@ -4,6 +4,7 @@ String.prototype.splice = function(idx, rem, str) {
 
 const WRITER = {
     string:"",
+    options:{},
     sub1:"",
     sub2:"",
     result:"",
@@ -24,13 +25,21 @@ const WRITER = {
       return this.result;
     },
     replaceVariable:function (dataSet) {
+        let replace = "";
         if(this.string.indexOf(this.sub1) < 0 || this.string.indexOf(this.sub2) < 0) return false;
         const SP = this.string.indexOf(this.sub1)+this.sub1.length;
         let string1 = this.string.substr(0,SP);
         let string2 = this.string.substr(SP);
         const TP = string1.length + string2.indexOf(this.sub2);
         const varName = this.string.substring(SP,TP);
-        this.string = this.string.splice(this.string.indexOf(this.sub1), this.getCutOffLength(SP, TP), dataSet[varName] || "");
+
+        if (dataSet[varName]) {
+          replace = dataSet[varName];
+          replace = this.checkForOptions(varName, dataSet, replace);
+        } else {
+          replace = this.checkForOptions(varName, dataSet, replace);
+        }
+        this.string = this.string.splice(this.string.indexOf(this.sub1), this.getCutOffLength(SP, TP), replace);
     },
     checkForVariables:function (dataSet) {
         // first check to see if we do have both substrings
@@ -49,11 +58,24 @@ const WRITER = {
     getCutOffLength: function(SP, TP) {
       return this.string.substring(SP, TP).length + this.sub1.length + this.sub2.length;
     },
+    checkForOptions: function(varName, dataSet, replace) {
+      if (this.options[varName]) {
+        if (typeof(this.options[varName]) != "function") {
+          return this.options[varName];
+        } else {
+          let value = dataSet[varName];
+          return this.options[varName](value);
+        }
+      } else {
+        return replace;
+      }
+    },
     renderHTML: function(obj) {
       let target = obj.target;
       let html = obj.html;
       let data = obj.data;
       let tableHdr = obj.tableHdr;
+      this.options = obj.options;
 
       if (!data) {
         target.html(html);
