@@ -4,6 +4,10 @@ String.prototype.splice = function(idx, rem, str) {
 
 const FUNCTIONS = {
   replaceBool: function(s, replace) {
+    if (s.replaceBool === true) {
+      s.replaceBool = ["X", "-"];
+    }
+
     if (replace === true || replace == "true") {
       replace = s.replaceBool[0];
     } else if (replace === false || replace == "false") {
@@ -14,6 +18,9 @@ const FUNCTIONS = {
   },
   
   noEmpty: function (s, replace) {
+    if (s.noEmpty === true) {
+      s.noEmpty = "-";
+    }
     if (Number.isNaN(parseFloat(replace)) && replace == "") {
       replace = s.noEmpty;
     } else if (replace == "" || replace == undefined) {
