@@ -100,8 +100,10 @@ const WRITER = {
     if (!obj.data) {
       target.innerHTML = obj.html;
     } else {
-      target.innerHTML = (tableHdr != undefined ? tableHdr : "") + this.getHtmlString(obj.html, obj.data);
+      let html = this.getHtmlString(obj.html, obj.data);
+      target.innerHTML = (tableHdr != undefined ? tableHdr : "") + html;
     }
+    this.result = "";
   },
 
   checkForVariables:function (string, dataSet) {
@@ -112,8 +114,8 @@ const WRITER = {
     let output = this.replaceVariable(string, dataSet);
 
     // if there's more substrings
-    if(output.indexOf(this.sub1) > -1 && output.indexOf(this.sub2) > -1) {
-        this.checkForVariables(output, dataSet);
+    if (output.indexOf(this.sub1) > -1 && output.indexOf(this.sub2) > -1) {
+      this.checkForVariables(output, dataSet);
     } else {
       this.result = this.result + output;
     }
