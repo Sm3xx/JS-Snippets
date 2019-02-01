@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        
+        <style>
+            table {
+                width: 100%;
+                text-align: center;
+            }
+        </style>
+
+        <div id="table">
+            <table>
+                <tr><th>Notation</th><th>Adressen</th><th>Nutzbare Hostadressen</th><th>Subnetzmaske Dez</th><th>Subnetzmaske Binär</th></tr>
+                <tr><td>{notation}</td><td>{adressen}</td><td>{nhost}</td><td>{subnd}</td><td>{subnb}</td></tr>
+            </table>
+        </div>
+    </body>
+
+    <script>
+        const tableRenderer = {
+            tableCode: [],
+            tableHeader: '',
+            tableLine: '',
+            /**
+            * starts the table rendering
+            * @param {String} containerId 
+            * @param {Array} data 
+            */
+            start: function (containerId, data) {
+                console.log(data);
+                var oContainer = document.getElementById(containerId);
+                var table = oContainer.innerHTML;
+                var matches = table.match(/(<tr>(.*?)tr>)/igm);
+                this.tableHeader = matches[0];
+                this.tableLine = matches[1];
+                oContainer.innerHTML = "";
+                this.tableCode.push('<table>');
+                this.writeHeader();    
+                this.writeBody(data);
+                this.tableCode.push('</table>');
+                var htmlString = '';
+                this.tableCode.forEach(element => {
+                    htmlString = htmlString + element;
+                });
+                oContainer.innerHTML = htmlString;
+                console.log(this);
+            },
+            writeHeader: function () {
+                this.tableCode.push(this.tableHeader);
+            },
+            writeBody: function (data) {
+                data.forEach(element=>{
+                    this.writeLine(element);
+                });
+            },
+            writeLine: function (object) {
+                var line = this.tableLine;
+                for (x in object) {
+                    console.log(x);
+                    line = line.replace(('{' + x + '}'), object[x].toString());
+                }
+                this.tableCode.push(line);
+            }
+        }
+    </script>
+
+    <script>
+        var daten = [ ];
+
+        for (let i=0; i<33; i++) {
+            let öpenÖbject = {};
+            öpenÖbject.notation = `/${i}`;
+            öpenÖbject.adressen = (2**(32-i)).toString();
+            öpenÖbject.nhost = ((2**(32-i))-2).toString(); // da is noch n error drin
+            öpenÖbject.subnb = machGanz(i);
+
+            // zuletzt .... push
+            daten.push(öpenÖbject);
+        }
+
+        tableRenderer.start('table', daten);
+
+        function machGanz(i) {
+            return `${machEinsen(i)}`
+        } 
+
+        function machEinsen(int) {
+            let output = "";
+            for (let i=0; i<int; i++) {
+                output += "1";
+            }
+            return machNullen(output);
+        }
+
+        function machNullen(string) {
+            let length = string.length;
+            for (let i=0; i<(32-length); i++) {
+                string += "0";
+            }
+            return machPunkte(string);
+        }
+
+        function machPunkte(s) {
+            for (let i=0; i<33; i++) {
+                if (i%8 = 0) {
+                    let a = s.substring(0, i)
+                    let b = s.substring(i, s.length)
+                    
+                }
+            }
+        }
+    </script>
+
+
+</html>
